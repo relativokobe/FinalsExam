@@ -17,9 +17,9 @@ public class VideoTable {
      * Inner class that defines video table contents.
      */
     public static abstract class VideoEntry implements BaseColumns {
-        public static final String TABLE_NAME        = "Video";
-        public static final String COL_TITLE         = "Title";
-        public static final String COL_DESCRIPTION   = "Description";
+        public static final String TABLE_NAME = "Video";
+        public static final String COL_TITLE = "Title";
+        public static final String COL_DESCRIPTION = "Description";
         public static final String COL_THUMBNAIL_URL = "ThumbnailUrl";
     }
 
@@ -119,13 +119,31 @@ public class VideoTable {
 
     public static List<Video> getAllVideos(Context context) {
         List<Video> videos = new ArrayList<>();
-        SQLiteDatabase db = null;
+        DbHandler dbh = new DbHandler(context);
+        SQLiteDatabase db = dbh.getWritableDatabase();
         Cursor cursor = null;
 
+
+
+        // Cursor cursor = null;
         try {
             // TODO: Implement retrieval of all video items from the database
-        } catch (Exception e) {
-            e.printStackTrace();
+
+            cursor = db.rawQuery(SELECT_QUERY, null);
+            if (cursor.moveToFirst()) {
+                do {
+                    String mId = cursor.getString(cursor.getColumnIndex(VideoTable.VideoEntry._ID));
+                    String mTitle = cursor.getString(cursor.getColumnIndex(VideoTable.VideoEntry.COL_TITLE));
+                    String mDescription = cursor.getString(cursor.getColumnIndex(VideoTable.VideoEntry.COL_DESCRIPTION));
+                    String mThumbnail = cursor.getString(cursor.getColumnIndex(VideoTable.VideoEntry.COL_THUMBNAIL_URL));
+                    Video vd = new Video(mId, mTitle, mDescription, mThumbnail);
+                    videos.add(vd);
+                } while (cursor.moveToNext());
+            }
+
+
+        } catch (Exception s) {
+
         } finally {
             if (db != null) {
                 db.close();
@@ -133,8 +151,7 @@ public class VideoTable {
             if (cursor != null) {
                 cursor.close();
             }
+            return videos;
         }
-
-        return videos;
     }
 }

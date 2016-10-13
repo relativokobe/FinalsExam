@@ -11,7 +11,7 @@ public class DbHandler extends SQLiteOpenHelper {
 
     private static DbHandler sInstance = null;
 
-    private DbHandler(Context context) {
+    public DbHandler(Context context) {
         super(context, DB_NAME, null, DB_VERSION);
     }
 
